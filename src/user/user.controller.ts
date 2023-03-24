@@ -1,3 +1,8 @@
+/*
+ * @Description:
+ * @Author: Martin Pang
+ * @Date: 2023-03-24 14:45:32
+ */
 import {
   Controller,
   Delete,
@@ -14,12 +19,8 @@ import { UserService } from './user.service';
 import { ConfigService } from '@nestjs/config';
 import { User } from './user.entity';
 import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
-import { query } from 'express';
+import { UserQuery,UserDto } from './dto/user.dto';
 
-interface UserDto {
-  username: string;
-  password: string;
-}
 
 @Controller('user')
 export class UserController {
@@ -34,19 +35,35 @@ export class UserController {
     this.logger.log('UserController init');
   }
 
-  @Get('getAllUsers')
-  getUsers(): any {
+  @Get('/getAllUsers')
+  getAllUsers(): any {
     this.logger.log(`请求getUsers成功`);
     return this.userService.findAll();
     // return this.userService.getUsers();
   }
 
-  @Post('addUser')
-  addUser(@Body() dto: UserDto): any {
-    // todo 解析Body参数
-    let newUser = dto as User;
-    return this.userService.create(newUser);
+  @Get('/getUsers')
+  getUsers(@Query() query: UserQuery) {
+    return this.userService.findUsers(query);
   }
+
+  @Get('/profile')
+  getUserProfile(@Query() query: any): any {
+    //todo!
+    return this.userService.findProfile(2);
+  }
+
+  @Get('/getUserById/:id')
+  getUserById(@Param('id') id: number,) {
+    return this.userService.findOneUserById(id);
+  }
+
+  @Post('addUser')
+  addUser(@Body() userDto: UserDto): any {
+    // todo 解析Body参数
+    return this.userService.create(userDto);
+  }
+
   @Patch('/:id')
   updateUser(@Param('id') userId: number, @Body() body: UserDto) {
     // todo 传递参数id
@@ -55,16 +72,15 @@ export class UserController {
   }
 
   @Delete('/:id')
-  deleteUser(@Param() id:number): any {
+  deleteUser(@Param() id: number): any {
     // todo 传递参数id
     return this.userService.remove(id);
   }
 
-  @Get('/profile')
-  getUserProfile(@Query() query:any): any {
-    return this.userService.findProfile(2);
-  }
 
+
+
+  //logsModule
   @Get('/logs')
   getUserLogs(): any {
     return this.userService.findUserLogs(2);

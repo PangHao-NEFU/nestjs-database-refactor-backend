@@ -1,8 +1,14 @@
+/*
+ * @Description:
+ * @Author: Martin Pang
+ * @Date: 2023-03-24 14:45:32
+ */
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './user.entity';
 import { Logs } from '../logs/logs.entity';
+import { UserQuery } from './dto/user.dto';
 
 @Injectable()
 export class UserService {
@@ -15,16 +21,44 @@ export class UserService {
     return this.userRepository.find();
   }
 
-  find(username: string) {
+  findUsers(userQuery: UserQuery) {
+    let { limit, page, username, gender, role } = userQuery;
+    const take = limit || 10;
+    const skip = ((page || 1) - 1) * take;
+    return this.userRepository.find({
+      select: {
+        //表示必须选择对象的哪些属性,可以是对象也可以是数组,比较简单就写数组,复杂写对象
+        id: true,
+        username: true,
+        profile: {
+          gender: true,
+        },
+      },
+      relations: { profile: true, roles: true }, //联表查询,关系需要加载的entity,是join和joinAndSelect的简写
+      where: {
+        username: username,
+        profile: {
+          gender: gender,
+        },
+        roles: {
+          id: role,
+        },
+      },
+      take, //一次拿多少数据
+      skip, //从多少开始拿
+    });
+  }
+
+  findOneUserByName(username: string) {
     return this.userRepository.findOne({ where: { username } });
   }
 
-  findOne(id: number) {
+  findOneUserById(id: number) {
     return this.userRepository.findOne({ where: { id } });
   }
 
-  async create(user: User) {
-    const userTmp = await this.userRepository.create(user);
+  create(user: Partial<User>) {
+    const userTmp = this.userRepository.create(user); //user可能是User的子集,所以使用create来创建并save
     return this.userRepository.save(userTmp);
   }
 
@@ -48,7 +82,7 @@ export class UserService {
   }
 
   async findUserLogs(id: number) {
-    const user = await this.findOne(id);
+    const user = await this.findOneUserById(id);
     return this.logsRepository.find({
       where: {
         user,

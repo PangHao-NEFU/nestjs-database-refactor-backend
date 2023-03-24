@@ -40,8 +40,8 @@ function buildConnectionOptions() {
     entities: entitiesDir,
     // 同步本地的schema与数据库 -> 初始化的时候去使用
     synchronize: true,
-    // logging: process.env.NODE_ENV === 'development',
-    logging: false,
+    logging: process.env.NODE_ENV === 'development',  //开发环境需要日志
+    // logging: false,
   } as TypeOrmModuleOptions;
 }
 

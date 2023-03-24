@@ -1,3 +1,8 @@
+/*
+ * @Description:
+ * @Author: Martin Pang
+ * @Date: 2023-03-24 14:45:32
+ */
 import {
   Column,
   Entity,
@@ -11,8 +16,8 @@ import { Logs } from '../logs/logs.entity';
 import { Roles } from '../roles/roles.entity';
 import { Profile } from './profile.entity';
 
-@Entity("user")
-export class User {
+@Entity('user')
+export class User {   //每个entity都对应数据库的一张表,所以通过数据源.manager.find(User)就可以拿到所有表中数据
   @PrimaryGeneratedColumn()
   id: number;
 

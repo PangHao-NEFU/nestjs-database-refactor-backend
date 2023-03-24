@@ -51,5 +51,10 @@ const envFilePath = `.env.${process.env.NODE_ENV || `development`}`;
   providers: [Logger],
   exports: [Logger],
 })
-  /**/
+  /*详解module
+  controllers:本模块注册的controller,用来匹配路由
+  providers:本模块注册的service,用来进行业务逻辑
+  imports:导入模块的列表,使本模块可以使用其他模块exports的service
+  exports:本模块提供的provider(service),可以在其他模块中imports并使用本模块exports的service
+  */
 export class AppModule {}
