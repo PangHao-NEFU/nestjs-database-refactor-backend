@@ -7,7 +7,6 @@ import {
   Controller,
   Delete,
   Get,
-  Patch,
   Post,
   Inject,
   LoggerService,
@@ -50,11 +49,11 @@ export class UserController {
   @Get('/profile')
   getUserProfile(@Query() query: any): any {
     //todo!
-    return this.userService.findProfile(2);
+    // return this.userService.findProfile(BigInt(2));
   }
 
   @Get('/getUserById/:id')
-  getUserById(@Param('id') id: number,) {
+  getUserById(@Param('id') id: bigint,) {
     return this.userService.findOneUserById(id);
   }
 
@@ -64,10 +63,12 @@ export class UserController {
     return this.userService.create(userDto);
   }
 
-  @Patch('/:id')
-  updateUser(@Param('id') userId: number, @Body() body: UserDto) {
+  @Post('updateUser/:id')
+  updateUser(@Param('id') userId: bigint, @Body() body: UserDto) {
+    console.log("🚀 ~ file: user.controller.ts:69 ~ UserController ~ updateUser ~ body:", body)
     // todo 传递参数id
     // todo 异常处理
+    
     return this.userService.update(userId, body as User);
   }
 
@@ -83,16 +84,16 @@ export class UserController {
   //logsModule
   @Get('/logs')
   getUserLogs(): any {
-    return this.userService.findUserLogs(2);
+    // return this.userService.findUserLogs(BigInt(2));
   }
 
   @Get('/logsByGroup')
   async getLogsByGroup(): Promise<any> {
-    const res = await this.userService.findLogsByGroup(2);
+    // const res = await this.userService.findLogsByGroup(2);
     // return res.map((o) => ({
     //   result: o.result,
     //   count: o.count,
     // }));
-    return res;
+    // return res;
   }
 }
